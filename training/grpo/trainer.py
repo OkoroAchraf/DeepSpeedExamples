@@ -133,6 +133,9 @@ class GRPOTrainer:
 
     def _rollout(self, rows, sampling: SamplingConfig) -> list:
         """Generate trajectories for ``rows`` in chunks, the hybrid engine in inference mode."""
+        # A rollout engine with its own copy of the weights (e.g. AutoTP) must see the latest update
+        # before generating, for evaluation too; the hybrid engine reads the training weights, so it no-ops.
+        self.rollout.sync_weights(self.step)
         self.engine.eval()
         samples = []
         # A call decodes rollout.generate_batch_size trajectories, by default as many as a training step does

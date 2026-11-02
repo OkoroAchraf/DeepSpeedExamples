@@ -138,8 +138,8 @@ class GRPOConfig:
         return asdict(self)
 
     def validate(self, world_size: int) -> None:
-        if self.rollout.engine != "hybrid_engine":
-            raise ValueError(f"Unknown rollout engine {self.rollout.engine!r}; expected 'hybrid_engine'")
+        if self.rollout.engine not in ("hybrid_engine", "autotp"):
+            raise ValueError(f"Unknown rollout engine {self.rollout.engine!r}; expected 'hybrid_engine' or 'autotp'")
         if self.rollout.n_samples_per_prompt < 2:
             raise ValueError("GRPO needs at least 2 samples per prompt to compare them")
         if self.rollout.temperature <= 0:

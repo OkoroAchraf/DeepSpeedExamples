@@ -152,5 +152,12 @@ The main knobs:
   rollout also generates each turn to its full token budget, so that ZeRO-3
   ranks stay in lockstep. That lockstep isn't needed with ZeRO-2. Expect
   rollout to dominate step time.
+- **AutoTP rollout (single-turn, experimental).** Set `rollout.engine` to
+  `"autotp"` and `rollout.multi_turn` to `false` to generate with an AutoTP
+  tensor-parallel copy of the policy that spans all GPUs, instead of each
+  rank's own training weights. The trainer calls `sync_weights` before every
+  rollout, which copies the latest weights into that copy in memory. The
+  copy costs roughly one more model's worth of GPU memory, divided by the number of
+  GPUs.
 - **ZeRO-2 only.** Under ZeRO-3, ranks with different numbers of turns would
   run different numbers of parameter gathers and hang.
